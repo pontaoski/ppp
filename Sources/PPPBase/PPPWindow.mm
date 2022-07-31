@@ -1,6 +1,7 @@
 #import "PPPBase.h"
 
 #import <gdk/gdk.h>
+#import <gdk/gdkwayland.h>
 #import <cairomm/region.h>
 
 @interface PPPWindowMorph : PPPMorph {
@@ -165,6 +166,11 @@
     attr.type_hint = GDK_WINDOW_TYPE_HINT_NORMAL;
 
     self->window = gdk_window_new(nullptr, &attr, 0);
+    if (GDK_IS_WAYLAND_WINDOW(self->window)) {
+        gdk_wayland_window_announce_ssd(self->window);
+    } else {
+        gdk_window_set_decorations(window, GDK_DECOR_ALL);
+    }
     self->rootMorph = [[PPPWindowMorph alloc] initFrom: self];
     self->untilPointerAllUpClient = nil;
     self->pointerClients = [NSMutableArray new];
