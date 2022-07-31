@@ -3,10 +3,28 @@
 #import <gdk/gdk.h>
 #import <cairomm/region.h>
 
-@interface PPPWindowMorph : PPPMorph
+@interface PPPWindowMorph : PPPMorph {
+    PPPWindow* _window;
+}
+
+- (id) initFrom: (PPPWindow*) window;
+
 @end
 
 @implementation PPPWindowMorph
+
+- (id) initFrom: (PPPWindow*) window {
+    self = [super init];
+
+    _window = window;
+
+    return self;
+}
+
+- (void)changed:(const PPPRectangle &)rect {
+    [_window changed: rect];
+}
+
 @end
 
 @implementation PPPWindow
@@ -147,7 +165,7 @@
     attr.type_hint = GDK_WINDOW_TYPE_HINT_NORMAL;
 
     self->window = gdk_window_new(nullptr, &attr, 0);
-    self->rootMorph = [[PPPWindowMorph alloc] init];
+    self->rootMorph = [[PPPWindowMorph alloc] initFrom: self];
     self->untilPointerAllUpClient = nil;
     self->pointerClients = [NSMutableArray new];
     self->keyboardClients = [NSMutableArray new];
@@ -195,5 +213,11 @@
     self->untilPointerAllUpClient = nil;
 }
 
+
+- (void)changed:(const PPPRectangle &)rect {
+    GdkRectangle gdkRect = {rect.x, rect.y, rect.width, rect.height};
+
+    gdk_window_invalidate_rect(self->window, &gdkRect, false);
+}
 
 @end

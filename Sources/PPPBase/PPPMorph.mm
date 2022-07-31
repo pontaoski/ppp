@@ -125,4 +125,12 @@
     return rect;
 }
 
+- (void)changed:(const PPPRectangle &)rect {
+    [owner changed: [self rectToParent: rect]];
+}
+
+- (void)changed {
+    [owner changed: [self baseBounds]];
+}
+
 @end

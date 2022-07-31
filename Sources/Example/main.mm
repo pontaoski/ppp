@@ -3,7 +3,10 @@
 #import <gdk/gdk.h>
 #import <cairomm/region.h>
 
-@interface RectangleMorph : PPPMorph
+@interface RectangleMorph : PPPMorph {
+    bool _pressed;
+}
+
 @end
 
 @implementation RectangleMorph
@@ -12,22 +15,31 @@
     self = [super init];
 
     [self setSize: {50, 50}];
+    _pressed = false;
 
     return self;
 }
 
 - (void)drawSelfTo:(PPPCanvas *)canvas {
-    [canvas fillRectangle:{position.x, position.y, 50, 50} color: [PPPColor green]];
+    if (_pressed) {
+        [canvas fillRectangle:{position.x, position.y, 50, 50} color: [PPPColor blue]];
+    } else {
+        [canvas fillRectangle:{position.x, position.y, 50, 50} color: [PPPColor green]];
+    }
     [canvas strokeRectangle:{position.x, position.y, 50, 50} width:5 color: [PPPColor red]];
 }
 
 - (void)mouseDown:(PPPEvent *)with {
-    printf("the one at (%d, %d) was clicked!\n", position.x, position.y);
+    _pressed = true;
+
     [with.window subscribePointerUntilAllUp: self];
+    [self changed];
 }
 
 - (void)mouseUp:(PPPEvent *)with {
-    printf("the one at (%d, %d) was released!\n", position.x, position.y);
+    _pressed = false;
+
+    [self changed];
 }
 
 @end

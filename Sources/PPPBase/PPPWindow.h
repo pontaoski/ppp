@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import "PPPCanvas.h"
 
 typedef struct _GdkWindow GdkWindow;
 
@@ -20,6 +21,8 @@ typedef struct _GdkWindow GdkWindow;
 
 - (id) init;
 - (void) show;
+
+- (void)changed:(const PPPRectangle &)rect;
 
 - (void) subscribePointerUntilAllUp: (PPPMorph*) morph;
 - (void) unsubscribePointerUntilAllUp: (PPPMorph*) morph;

@@ -34,4 +34,7 @@
 
 - (PPPMorph*) morphAtPosition: (PPPPoint)point;
 
+- (void) changed: (const PPPRectangle&)rect;
+- (void) changed;
+
 @end
