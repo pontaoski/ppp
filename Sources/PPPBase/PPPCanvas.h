@@ -69,6 +69,9 @@ struct PPPRectangle {
 - (void) strokeRectangle: (PPPRectangle) rect width: (int) width color: (PPPColor*) color;
 - (void) fillRectangle: (PPPRectangle) rect color: (PPPColor*) color;
 
+- (void) strokeRoundedRectangle: (PPPRectangle) rect width: (int) width color: (PPPColor*) color radius: (int) radius;
+- (void) fillRoundedRectangle: (PPPRectangle) rect color: (PPPColor*) color radius: (int) radius;
+
 @end
 
 

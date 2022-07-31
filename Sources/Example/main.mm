@@ -22,11 +22,11 @@
 
 - (void)drawSelfTo:(PPPCanvas *)canvas {
     if (_pressed) {
-        [canvas fillRectangle:{position.x, position.y, 50, 50} color: [PPPColor blue]];
+        [canvas fillRoundedRectangle:{position.x, position.y, 50, 50} color: [PPPColor blue] radius: 5];
     } else {
-        [canvas fillRectangle:{position.x, position.y, 50, 50} color: [PPPColor green]];
+        [canvas fillRoundedRectangle:{position.x, position.y, 50, 50} color: [PPPColor green] radius: 5];
+        [canvas strokeRoundedRectangle:{position.x, position.y, 50, 50} width:5 color: [PPPColor red] radius: 5];
     }
-    [canvas strokeRectangle:{position.x, position.y, 50, 50} width:5 color: [PPPColor red]];
 }
 
 - (void)mouseDown:(PPPEvent *)with {
