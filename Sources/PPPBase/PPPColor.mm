@@ -8,18 +8,18 @@
 @synthesize alpha;
 
 + (PPPColor *)blue {
-    return [[PPPColor alloc] initWithRed:0 green:0 blue:255 alpha:255];
+    return [[PPPColor alloc] initWithRed:0 green:0 blue:1.0 alpha:1.0];
 }
 
 + (PPPColor *)green {
-    return [[PPPColor alloc] initWithRed:0 green:255 blue:0 alpha:255];
+    return [[PPPColor alloc] initWithRed:0 green:1.0 blue:0 alpha:1.0];
 }
 
 + (PPPColor *)red {
-    return [[PPPColor alloc] initWithRed:255 green:0 blue:0 alpha:255];
+    return [[PPPColor alloc] initWithRed:1.0 green:0 blue:0 alpha:1.0];
 }
 
-- (id)initWithRed:(int)withRed green:(int)withGreen blue:(int)withBlue alpha:(int)withAlpha {
+- (id)initWithRed:(double)withRed green:(double)withGreen blue:(double)withBlue alpha:(double)withAlpha {
     self = [super init];
 
     self->red = withRed;

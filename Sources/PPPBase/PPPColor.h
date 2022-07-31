@@ -1,21 +1,21 @@
 #import <Foundation/Foundation.h>
 
 @interface PPPColor : NSObject {
-    int red;
-    int green;
-    int blue;
-    int alpha;
+    double red;
+    double green;
+    double blue;
+    double alpha;
 }
 
 + (PPPColor*) red;
 + (PPPColor*) green;
 + (PPPColor*) blue;
 
-- (id) initWithRed: (int)red green: (int)green blue: (int)blue alpha: (int)alpha;
+- (id) initWithRed: (double)red green: (double)green blue: (double)blue alpha: (double)alpha;
 
-@property int red;
-@property int green;
-@property int blue;
-@property int alpha;
+@property double red;
+@property double green;
+@property double blue;
+@property double alpha;
 
 @end

@@ -1,6 +1,7 @@
 #define private public
 
 #import "PPPCanvas.h"
+#import "PPPColor+Cairo.h"
 
 #import <cairomm/surface.h>
 #import <cairomm/context.h>
@@ -13,7 +14,7 @@
     ctx->save();
 
     ctx->set_line_width(width);
-    ctx->set_source_rgba(color.red, color.green, color.blue, color.alpha);
+    ctx->set_source([color intoPattern]);
     ctx->rectangle(rect.x + ((float)width/2.0), rect.y + ((float)width/2.0), rect.width, rect.height);
     ctx->stroke();
 
@@ -25,7 +26,7 @@
 
     ctx->save();
 
-    ctx->set_source_rgba(color.red, color.green, color.blue, color.alpha);
+    ctx->set_source([color intoPattern]);
     ctx->rectangle(rect.x, rect.y, rect.width, rect.height);
     ctx->fill();
 
