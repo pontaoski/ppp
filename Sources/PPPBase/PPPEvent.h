@@ -27,6 +27,9 @@ enum class PPPEventType {
     OtherMouseTripleClick,
 
     MouseMove,
+
+    KeyDown,
+    KeyUp,
 };
 
 enum class PPPButtonState {
@@ -55,6 +58,7 @@ constexpr bool operator&(PPPButtonState lhs, PPPButtonState rhs) {
     PPPPoint point;
     __weak PPPWindow* window;
     PPPButtonState buttonState;
+    uint32_t whatKey;
 }
 
 - (id) initFrom: (GdkEvent*)event window: (__weak PPPWindow*) window;
@@ -63,5 +67,6 @@ constexpr bool operator&(PPPButtonState lhs, PPPButtonState rhs) {
 @property(readonly) PPPPoint point;
 @property(readonly) PPPWindow* window;
 @property(readonly) PPPButtonState buttonState;
+@property(readonly) uint32_t whatKey;
 
 @end

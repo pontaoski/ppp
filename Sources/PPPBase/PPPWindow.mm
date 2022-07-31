@@ -97,6 +97,16 @@
                     [subscriber mouseUp: pppEvent];
                 }
                 break;
+            case PPPEventType::KeyDown:
+                for (PPPMorph* subscriber in window->keyboardClients) {
+                    [subscriber keyDown: pppEvent];
+                }
+                break;
+            case PPPEventType::KeyUp:
+                for (PPPMorph* subscriber in window->keyboardClients) {
+                    [subscriber keyUp: pppEvent];
+                }
+                break;
             case PPPEventType::LeftMouseDoubleClick:
                 break;
             case PPPEventType::LeftMouseTripleClick:

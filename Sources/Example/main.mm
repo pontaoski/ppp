@@ -1,4 +1,5 @@
 #import "PPPBase.h"
+#include "gdk/gdkkeysyms.h"
 #include <cstdio>
 #import <gdk/gdk.h>
 #import <cairomm/region.h>
@@ -42,6 +43,22 @@
     [self changed];
 }
 
+- (void)keyDown:(PPPEvent *)with {
+    if (with.whatKey == GDK_KEY_Return) {
+        _pressed = true;
+
+        [self changed];
+    }
+}
+
+- (void)keyUp:(PPPEvent *)with {
+    if (with.whatKey == GDK_KEY_Return) {
+        _pressed = false;
+
+        [self changed];
+    }
+}
+
 @end
 
 int main(int argc, char* argv[]) {
@@ -58,6 +75,8 @@ int main(int argc, char* argv[]) {
         [window.rootMorph addMorph: parentMorph];
         [window setTitle:@"Hello World!"];
         [window show];
+
+        [window subscribeKeyboard: childMorph];
 
         auto loop = g_main_loop_new(nullptr, true);
         g_main_loop_run(loop);

@@ -12,4 +12,10 @@
 /// The left mouse button is up
 - (void) mouseUp: (PPPEvent*) with;
 
+/// A key has been pressed down
+- (void) keyDown: (PPPEvent*) with;
+
+/// A key has been released
+- (void) keyUp: (PPPEvent*) with;
+
 @end

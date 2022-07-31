@@ -20,4 +20,12 @@
     [self.nextHandler mouseUp: with];
 }
 
+- (void)keyDown:(PPPEvent *)with {
+    [self.nextHandler keyDown: with];
+}
+
+- (void)keyUp:(PPPEvent *)with {
+    [self.nextHandler keyUp: with];
+}
+
 @end

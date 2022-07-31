@@ -7,6 +7,7 @@
 
 - (void) setFromButtonEvent: (GdkEventButton*)event;
 - (void) setFromMotionEvent: (GdkEventMotion*)event;
+- (void) setFromKeyEvent: (GdkEventKey*)event;
 
 @end
 
@@ -16,6 +17,7 @@
 @synthesize point;
 @synthesize window;
 @synthesize buttonState;
+@synthesize whatKey;
 
 - (id)initFrom:(GdkEvent *)event window: (__weak PPPWindow*) win {
     self = [super init];
@@ -32,6 +34,10 @@
     case GDK_MOTION_NOTIFY:
         [self setFromMotionEvent: (GdkEventMotion*)event];
         break;
+    case GDK_KEY_PRESS:
+    case GDK_KEY_RELEASE:
+        [self setFromKeyEvent: (GdkEventKey*)event];
+        break;
     default:
         @throw [NSException exceptionWithName:NSInternalInconsistencyException
                     reason:[NSString stringWithFormat:@"I don't know how to handle that event type! %d", event->type]
@@ -41,24 +47,28 @@
     return self;
 }
 
-- (void) setFromButtonEvent:(GdkEventButton *)event {
-    self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+- (void) setButtonStateFrom: (guint)state type: (guint)type button: (guint)button {
     self->buttonState = PPPButtonState::None;
-    if (event->state & GDK_BUTTON1_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 1)) {
+    if (state & GDK_BUTTON1_MASK && (type != GDK_BUTTON_RELEASE || button != 1)) {
         self->buttonState |= PPPButtonState::Left;
     }
-    if (event->state & GDK_BUTTON2_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 2)) {
+    if (state & GDK_BUTTON2_MASK && (type != GDK_BUTTON_RELEASE || button != 2)) {
         self->buttonState |= PPPButtonState::Middle;
     }
-    if (event->state & GDK_BUTTON3_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 3)) {
+    if (state & GDK_BUTTON3_MASK && (type != GDK_BUTTON_RELEASE || button != 3)) {
         self->buttonState |= PPPButtonState::Right;
     }
-    if (event->state & GDK_BUTTON4_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 4)) {
+    if (state & GDK_BUTTON4_MASK && (type != GDK_BUTTON_RELEASE || button != 4)) {
         self->buttonState |= PPPButtonState::Other;
     }
-    if (event->state & GDK_BUTTON5_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 5)) {
+    if (state & GDK_BUTTON5_MASK && (type != GDK_BUTTON_RELEASE || button != 5)) {
         self->buttonState |= PPPButtonState::Other;
     }
+}
+
+- (void) setFromButtonEvent:(GdkEventButton *)event {
+    self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+    [self setButtonStateFrom: event->state type: event->type button: event->button];
 
     switch (event->button) {
     case 1: // left
@@ -95,6 +105,26 @@
 
 - (void)setFromMotionEvent:(GdkEventMotion *)event {
     self->eventType = PPPEventType::MouseMove;
+    self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+    [self setButtonStateFrom: event->state type: event->type button: 0];
+}
+
+- (void)setFromKeyEvent:(GdkEventKey *)event {
+    self->point = {-1, -1};
+    [self setButtonStateFrom: event->state type: event->type button: 0];
+
+    switch (event->type) {
+    case GDK_KEY_PRESS:
+        self->eventType = PPPEventType::KeyDown;
+        break;
+    case GDK_KEY_RELEASE:
+        self->eventType = PPPEventType::KeyUp;
+        break;
+    default:
+        break;
+    }
+
+    self->whatKey = event->keyval;    
 }
 
 @end
