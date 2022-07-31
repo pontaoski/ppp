@@ -23,6 +23,11 @@
 
 - (void)mouseDown:(PPPEvent *)with {
     printf("the one at (%d, %d) was clicked!\n", position.x, position.y);
+    [with.window subscribePointerUntilAllUp: self];
+}
+
+- (void)mouseUp:(PPPEvent *)with {
+    printf("the one at (%d, %d) was released!\n", position.x, position.y);
 }
 
 @end

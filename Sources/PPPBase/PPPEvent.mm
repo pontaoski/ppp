@@ -14,9 +14,13 @@
 
 @synthesize eventType;
 @synthesize point;
+@synthesize window;
+@synthesize buttonState;
 
-- (id)initFrom:(GdkEvent *)event {
+- (id)initFrom:(GdkEvent *)event window: (__weak PPPWindow*) win {
     self = [super init];
+
+    self->window = win;
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -39,6 +43,22 @@
 
 - (void) setFromButtonEvent:(GdkEventButton *)event {
     self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+    self->buttonState = PPPButtonState::None;
+    if (event->state & GDK_BUTTON1_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 1)) {
+        self->buttonState |= PPPButtonState::Left;
+    }
+    if (event->state & GDK_BUTTON2_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 2)) {
+        self->buttonState |= PPPButtonState::Middle;
+    }
+    if (event->state & GDK_BUTTON3_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 3)) {
+        self->buttonState |= PPPButtonState::Right;
+    }
+    if (event->state & GDK_BUTTON4_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 4)) {
+        self->buttonState |= PPPButtonState::Other;
+    }
+    if (event->state & GDK_BUTTON5_MASK && (event->type != GDK_BUTTON_RELEASE || event->button != 5)) {
+        self->buttonState |= PPPButtonState::Other;
+    }
 
     switch (event->button) {
     case 1: // left

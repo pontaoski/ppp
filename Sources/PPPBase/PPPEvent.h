@@ -29,14 +29,39 @@ enum class PPPEventType {
     MouseMove,
 };
 
+enum class PPPButtonState {
+    None = 0,
+    Left = 1 << 0,
+    Middle = 1 << 1,
+    Right = 1 << 2,
+    Other = 1 << 3,
+};
+
+constexpr PPPButtonState operator|(PPPButtonState lhs, PPPButtonState rhs) {
+    return PPPButtonState((int)lhs|(int)rhs);
+}
+constexpr PPPButtonState& operator|=(PPPButtonState& lhs, PPPButtonState rhs) {
+    lhs = lhs|rhs;
+    return lhs;
+}
+constexpr bool operator&(PPPButtonState lhs, PPPButtonState rhs) {
+    return ((int)lhs & (int)rhs) != 0;
+}
+
+@class PPPWindow;
+
 @interface PPPEvent : NSObject {
     PPPEventType eventType;
     PPPPoint point;
+    __weak PPPWindow* window;
+    PPPButtonState buttonState;
 }
 
-- (id) initFrom: (GdkEvent*)event;
+- (id) initFrom: (GdkEvent*)event window: (__weak PPPWindow*) window;
 
 @property(readonly) PPPEventType eventType;
 @property(readonly) PPPPoint point;
+@property(readonly) PPPWindow* window;
+@property(readonly) PPPButtonState buttonState;
 
 @end

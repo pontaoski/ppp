@@ -63,17 +63,20 @@
         case GDK_OWNER_CHANGE:
         case GDK_ENTER_NOTIFY:
         case GDK_LEAVE_NOTIFY:
+        case GDK_PROPERTY_NOTIFY:
             break;
         default: {
-            auto pppEvent = [[PPPEvent alloc] initFrom: event];
             auto window = (__bridge PPPWindow*)(g_object_get_data(G_OBJECT(event->any.window), "PPPWindow"));
+            auto pppEvent = [[PPPEvent alloc] initFrom: event window: window];
 
             switch (pppEvent.eventType) {
             case PPPEventType::LeftMouseClick:
                 [[window->rootMorph morphAtPosition: pppEvent.point] mouseDown: pppEvent];
                 break;
             case PPPEventType::LeftMouseRelease:
-                [[window->rootMorph morphAtPosition: pppEvent.point] mouseUp: pppEvent];
+                for (PPPMorph* subscriber in window->pointerClients) {
+                    [subscriber mouseUp: pppEvent];
+                }
                 break;
             case PPPEventType::LeftMouseDoubleClick:
                 break;
@@ -104,7 +107,23 @@
             case PPPEventType::OtherMouseTripleClick:
                 break;
             case PPPEventType::MouseMove:
-                [[window->rootMorph morphAtPosition: pppEvent.point] mouseMoved: pppEvent];
+                for (PPPMorph* subscriber in window->pointerClients) {
+                    [subscriber mouseMoved: pppEvent];
+                }
+                break;
+            }
+
+            // handle the release
+            switch (pppEvent.eventType) {
+            case PPPEventType::LeftMouseRelease:
+            case PPPEventType::MiddleMouseRelease:
+            case PPPEventType::RightMouseRelease:
+            case PPPEventType::OtherMouseRelease:
+                if (pppEvent.buttonState == PPPButtonState::None) {
+                    [window unsubscribePointerUntilAllUp: window->untilPointerAllUpClient];
+                }
+                break;
+            default:
                 break;
             }
         }
@@ -129,6 +148,9 @@
 
     self->window = gdk_window_new(nullptr, &attr, 0);
     self->rootMorph = [[PPPWindowMorph alloc] init];
+    self->untilPointerAllUpClient = nil;
+    self->pointerClients = [NSMutableArray new];
+    self->keyboardClients = [NSMutableArray new];
     g_object_set_data(G_OBJECT(self->window), "PPPWindow", (__bridge void*)self);
 
     return self;
@@ -139,5 +161,39 @@
     gdk_window_show(self->window);
 
 }
+
+- (void)subscribeKeyboard:(PPPMorph *)morph {
+    [self->keyboardClients addObject: morph];
+}
+
+- (void)unsubscribeKeyboard:(PPPMorph *)morph {
+    [self->keyboardClients removeObject: morph];
+}
+
+- (void)subscribePointer:(PPPMorph *)morph {
+    [self->pointerClients addObject: morph];
+}
+
+- (void)unsubscribePointer:(PPPMorph *)morph {
+    [self->pointerClients removeObject: morph];
+}
+
+- (void)subscribePointerUntilAllUp:(PPPMorph *)morph {
+    if (self->untilPointerAllUpClient != nil) {
+        [self unsubscribePointer: self->untilPointerAllUpClient];
+    }
+    self->untilPointerAllUpClient = morph;
+    [self subscribePointer: morph];
+}
+
+- (void)unsubscribePointerUntilAllUp:(PPPMorph*) morph {
+    if (self->untilPointerAllUpClient != morph || self->untilPointerAllUpClient == nil) {
+        return;
+    }
+
+    [self unsubscribePointer:morph];
+    self->untilPointerAllUpClient = nil;
+}
+
 
 @end

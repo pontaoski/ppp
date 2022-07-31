@@ -9,12 +9,24 @@ typedef struct _GdkWindow GdkWindow;
     GdkWindow* window;
     NSString* title;
     PPPWindowMorph* rootMorph;
+
+    PPPMorph* untilPointerAllUpClient;
+
+    NSMutableArray<PPPMorph*>* pointerClients;
+    NSMutableArray<PPPMorph*>* keyboardClients;
 }
 
 + (void) initialize;
 
 - (id) init;
 - (void) show;
+
+- (void) subscribePointerUntilAllUp: (PPPMorph*) morph;
+- (void) unsubscribePointerUntilAllUp: (PPPMorph*) morph;
+- (void) subscribePointer: (PPPMorph*) morph;
+- (void) unsubscribePointer: (PPPMorph*) morph;
+- (void) subscribeKeyboard: (PPPMorph*) morph;
+- (void) unsubscribeKeyboard: (PPPMorph*) morph;
 
 @property(retain) NSString* title;
 @property(readonly) PPPMorph* rootMorph;

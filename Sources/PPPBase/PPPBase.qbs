@@ -9,7 +9,7 @@ StaticLibrary {
 	Export {
 		cpp.includePaths: exportingProduct.sourceDirectory
 		cpp.dynamicLibraries: ["gnustep-base", "objc"]
-		cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc"]
+		cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fcoroutines-ts"]
 
 		Depends { name: "gdk-3.0" }
 		Depends { name: "glib-2.0" }
@@ -18,7 +18,7 @@ StaticLibrary {
 	}
 
 	cpp.dynamicLibraries: ["gnustep-base", "objc"]
-	cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc"]
+	cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fcoroutines-ts"]
 
 	Depends { name: "gdk-3.0" }
 	Depends { name: "glib-2.0" }
