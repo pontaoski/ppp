@@ -1,4 +1,5 @@
 #import "PPPBase.h"
+#include "PPPCanvas.h"
 #include "gdk/gdkkeysyms.h"
 #include <cstdio>
 #import <gdk/gdk.h>
@@ -22,11 +23,12 @@
 }
 
 - (void)drawSelfTo:(PPPCanvas *)canvas {
+    const auto rrect = PPPRoundedRectangle::initWithRadius(0, 0, 50, 50, 5);
     if (_pressed) {
-        [canvas fillRoundedRectangle:{position.x, position.y, 50, 50} color: [PPPColor blue] radius: 5];
+        [canvas fillRoundedRectangle:rrect color: [PPPColor blue]];
     } else {
-        [canvas fillRoundedRectangle:{position.x, position.y, 50, 50} color: [PPPColor green] radius: 5];
-        [canvas strokeRoundedRectangle:{position.x, position.y, 50, 50} width:5 color: [PPPColor red] radius: 5];
+        [canvas fillRoundedRectangle:rrect color: [PPPColor green]];
+        [canvas strokeRoundedRectangle:rrect width:5 color: [PPPColor red]];
     }
 }
 

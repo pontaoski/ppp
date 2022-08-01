@@ -8,18 +8,68 @@
 
 @implementation PPPCanvas
 
-template<typename T>
-void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, T x, T y, T w, T h, T r)
+// yoinked from gsk drawing code because hell no idk how to write graphics
+// probably copyright ebassi
+// REMINDME check on that if i actually make this a serious thing
+
+static void arc(Cairo::RefPtr<Cairo::Context>& ctx, double a1, double a2, bool isNegative)
 {
+    if (isNegative) {
+        ctx->arc_negative(0.0, 0.0, 1.0, a1, a2);
+    } else {
+        ctx->arc(0.0, 0.0, 1.0, a1, a2);
+    }
+}
+
+static void ellipsis(Cairo::RefPtr<Cairo::Context>& ctx, double xCoord, double yCoord, double xRadius, double yRadius, double a1, double a2)
+{
+    if (xRadius <= 0.0 || yRadius <= 0.0) {
+        ctx->line_to(xCoord, yCoord);
+        return;
+    }
+
+    const auto savedMatrix = ctx->get_matrix();
+    ctx->translate(xCoord, yCoord);
+    ctx->scale(xRadius, yRadius);
+    arc(ctx, a1, a2, false);
+    ctx->set_matrix(savedMatrix);
+}
+
+static void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, const PPPRoundedRectangle& rect)
+{
+    using Corn = PPPRoundedRectangle::WhichCorner;
+
     ctx->begin_new_sub_path();
-    ctx->arc(x + r, y + r, r, M_PI, 3 * M_PI / 2);
-    ctx->arc(x + w - r, y + r, r, 3 *M_PI / 2, 2 * M_PI);
-    ctx->arc(x + w - r, y + h - r, r, 0, M_PI / 2);
-    ctx->arc(x + r, y + h - r, r, M_PI / 2, M_PI);
+
+    const auto& topLeft = rect.corners[Corn::TopLeft];
+    const auto& topRight = rect.corners[Corn::TopRight];
+    const auto& bottomLeft = rect.corners[Corn::BottomLeft];
+    const auto& bottomRight = rect.corners[Corn::BottomRight];
+
+    ellipsis(ctx, rect.x + topLeft.width
+                , rect.y + topLeft.height
+                , topLeft.width, topLeft.height,
+                M_PI, 3 * M_PI_2);
+
+    ellipsis(ctx, rect.x + rect.width - topRight.width
+                , rect.y + topRight.height
+                , topRight.width, topRight.height,
+                -M_PI_2, 0);
+
+    ellipsis(ctx, rect.x + rect.width - bottomRight.width
+                , rect.y + rect.height - bottomRight.height
+                , bottomRight.width, bottomRight.height,
+                0, M_PI_2);
+
+    ellipsis(ctx, rect.x + bottomLeft.width
+                , rect.y + rect.height - bottomLeft.height
+                , bottomLeft.width, bottomLeft.height,
+                M_PI_2, M_PI);
+
     ctx->close_path();
 }
 
-- (void) strokeRectangle:(PPPRectangle)rect width:(int)width color:(PPPColor *)color {
+- (void) strokeRectangle:(const PPPRectangle&)rect width:(int)width color:(PPPColor *)color {
     auto ctx = self.context;
 
     ctx->save();
@@ -32,7 +82,7 @@ void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, T x, T y, T w, T h, T r)
     ctx->restore();
 }
 
-- (void)fillRectangle:(PPPRectangle)rect color:(PPPColor *)color {
+- (void)fillRectangle:(const PPPRectangle&)rect color:(PPPColor *)color {
     auto ctx = self.context;
 
     ctx->save();
@@ -54,29 +104,40 @@ void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, T x, T y, T w, T h, T r)
     return self;
 }
 
-- (void)fillRoundedRectangle:(PPPRectangle)rect color:(PPPColor *)color radius:(int)radius {
+- (void)fillRoundedRectangle:(const PPPRoundedRectangle&)rect color:(PPPColor *)color {
     auto ctx = self.context;
 
     ctx->save();
 
     ctx->set_source([color intoPattern]);
-    roundedRect(ctx, rect.x, rect.y, rect.width, rect.height, radius);
+    roundedRect(ctx, rect);
     ctx->fill();
 
     ctx->restore();
 }
 
-- (void)strokeRoundedRectangle:(PPPRectangle)rect width:(int)width color:(PPPColor *)color radius:(int)radius {
+- (void)strokeRoundedRectangle:(const PPPRoundedRectangle&)rect width:(int)width color:(PPPColor *)color {
     auto ctx = self.context;
 
     ctx->save();
 
     ctx->set_line_width(width);
     ctx->set_source([color intoPattern]);
-    roundedRect<double>(ctx, rect.x + ((float)width/2.0), rect.y + ((float)width/2.0), rect.width - width, rect.height - width, radius);
+    const auto factor = (float)width/2.0;
+    roundedRect(ctx, rect.shrink(factor, factor, factor, factor));
     ctx->stroke();
 
     ctx->restore();
+}
+
+- (void)withTransformation:(int)tX tY:(int)tY callback: (CanvasCallback) callback {
+    self.context->save();
+
+    self.context->translate(tX, tY);
+
+    callback(self);
+
+    self.context->restore();
 }
 
 @end

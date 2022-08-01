@@ -1,4 +1,5 @@
 #import "PPPBase.h"
+#include "PPPCanvas.h"
 
 #import <gdk/gdk.h>
 #import <gdk/gdkwayland.h>
@@ -55,14 +56,17 @@
     gdk_event_handler_set([](GdkEvent* event, gpointer) {
         switch (event->type) {
         case GDK_EXPOSE: {
-            auto region = Cairo::Region::create(Cairo::RectangleInt { .x = 0, .y = 0, .width = 400, .height = 400 });
+            auto region = Cairo::Region(gdk_window_get_clip_region(event->expose.window));
+            auto extents = region.get_extents();
 
-            auto ctx = gdk_window_begin_draw_frame(event->expose.window, region->cobj());
+            auto ctx = gdk_window_begin_draw_frame(event->expose.window, region.cobj());
             auto cairo = gdk_drawing_context_get_cairo_context(ctx);
             auto cairoContext = Cairo::RefPtr<Cairo::Context>(new Cairo::Context(cairo));
 
             auto window = (__bridge PPPWindow*)(g_object_get_data(G_OBJECT(event->expose.window), "PPPWindow"));
             auto canvas = [[PPPContextCanvas alloc] initWithContext:cairoContext];
+            const auto rrect = PPPRoundedRectangle::initWithRadii(extents.x, extents.y, extents.width, extents.height, 0.0, 0.0, 5.0, 5.0);
+            [canvas fillRoundedRectangle:rrect color:[[PPPColor alloc] initWithRed: 222.0/255.0 green: 224.0/255.0 blue: 226.0/255.0 alpha: 1.0]];
             [window->rootMorph drawTo: canvas];
 
             gdk_window_end_draw_frame(event->expose.window, ctx);

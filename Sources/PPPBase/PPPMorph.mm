@@ -17,7 +17,10 @@
     [self drawSelfTo:canvas];
 
     for (PPPMorph* submorph in self->submorphs) {
-        [submorph drawTo:canvas];
+        const auto pos = submorph.position;
+        [canvas withTransformation: pos.x tY:pos.y callback: ^(PPPCanvas *canvas) {
+            [submorph drawTo:canvas];
+        }];
     }
 }
 
