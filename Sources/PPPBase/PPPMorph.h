@@ -15,16 +15,18 @@
 - (void) drawTo: (PPPCanvas*) canvas;
 - (void) drawSelfTo: (PPPCanvas*) canvas;
 
-- (PPPMorph*) parentMorph;
+@property(readonly) PPPMorph* parentMorph;
+
 - (void) addMorph: (PPPMorph*) newMorph;
 - (void) removeMorph: (PPPMorph*) oldMorph;
-- (NSArray<PPPMorph*>*) submorphs;
+
+@property(readonly) NSArray<PPPMorph*>* submorphs;
 
 @property PPPPoint position;
 @property PPPSize size;
 
-- (PPPRectangle) baseBounds;
-- (PPPRectangle) totalBounds;
+@property(readonly) PPPRectangle baseBounds;
+@property(readonly) PPPRectangle totalBounds;
 
 - (PPPPoint) pointToParent: (const PPPPoint&)point;
 - (PPPPoint) pointFromParent: (const PPPPoint&)point;
