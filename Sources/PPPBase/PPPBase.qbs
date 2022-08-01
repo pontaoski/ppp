@@ -9,7 +9,7 @@ Library {
 	Export {
 		cpp.includePaths: exportingProduct.sourceDirectory
 		cpp.dynamicLibraries: ["gnustep-base", "objc"]
-		cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fblocks", "-fcoroutines-ts"]
+		cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fblocks", "-fcoroutines-ts", "-std=c++17"]
 		cpp.rpaths: exportingProduct.buildDirectory
 
 		Depends { name: "graphene-1.0" }
@@ -20,7 +20,7 @@ Library {
 	}
 
 	cpp.dynamicLibraries: ["gnustep-base", "objc"]
-	cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fblocks", "-fcoroutines-ts"]
+	cpp.objcxxFlags: ["-fconstant-string-class=NSConstantString", "-fobjc-runtime=gnustep-2.0", "-fobjc-arc", "-fblocks", "-fcoroutines-ts", "-std=c++17"]
 	cpp.rpaths: cpp.buildDirectory
 
 	Depends { name: "graphene-1.0" }
