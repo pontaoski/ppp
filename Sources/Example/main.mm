@@ -59,6 +59,10 @@
     }
 }
 
+- (bool) canBeKeyMorph {
+    return true;
+}
+
 @end
 
 int main(int argc, char* argv[]) {

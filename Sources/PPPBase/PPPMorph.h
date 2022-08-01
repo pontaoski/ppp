@@ -20,6 +20,9 @@
 - (void) removeMorph: (PPPMorph*) oldMorph;
 - (NSArray<PPPMorph*>*) submorphs;
 
+- (void) submorphAdded: (PPPMorph*) morph in: (PPPMorph*) parent;
+- (void) submorphRemoved: (PPPMorph*) morph from: (PPPMorph*) oldParent;
+
 @property PPPPoint position;
 @property PPPSize size;
 
@@ -28,6 +31,7 @@
 
 - (PPPPoint) pointToParent: (const PPPPoint&)point;
 - (PPPPoint) pointFromParent: (const PPPPoint&)point;
+- (PPPPoint) pointToRoot: (const PPPPoint&)point;
 
 - (PPPRectangle)rectToParent: (const PPPRectangle&)rect;
 - (PPPRectangle)rectFromParent: (const PPPRectangle&)rect;
@@ -36,5 +40,7 @@
 
 - (void) changed: (const PPPRectangle&)rect;
 - (void) changed;
+
+- (bool) canBeKeyMorph;
 
 @end

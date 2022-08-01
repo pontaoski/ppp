@@ -6,9 +6,12 @@
 
 @interface PPPWindowMorph : PPPMorph {
     PPPWindow* _window;
+    NSMutableArray<PPPMorph*>* _focusLoop;
+    PPPMorph* _keyMorph;
 }
 
 - (id) initFrom: (PPPWindow*) window;
+- (void) _sortFocusLoop;
 
 @end
 
@@ -18,12 +21,106 @@
     self = [super init];
 
     _window = window;
+    _focusLoop = [NSMutableArray new];
+    _keyMorph = nil;
 
     return self;
 }
 
 - (void)changed:(const PPPRectangle &)rect {
     [_window changed: rect];
+}
+
+- (void)submorphAdded:(PPPMorph *)morph in:(PPPMorph *)parent {
+    [_focusLoop addObject: morph];
+    [self _sortFocusLoop];
+}
+
+- (void)submorphRemoved:(PPPMorph *)morph from:(PPPMorph *)oldParent {
+    [_focusLoop removeObject: morph];
+}
+
+- (void)_doKeyMorph: (bool)forward {
+    if (_keyMorph == nil) {
+        for (PPPMorph* morph in _focusLoop) {
+            if (morph.canBeKeyMorph) {
+                _keyMorph = morph;
+                break;
+            }
+        }
+        return;
+    }
+
+    PPPMorph* beforeMorph = nil;
+    PPPMorph* afterMorph = nil;
+    bool foundCurrentMorph = false;
+
+    for (PPPMorph* morph in _focusLoop) {
+        NSLog(@"looping at %@", morph);
+        if (!foundCurrentMorph) {
+            if (morph == _keyMorph) {
+                printf("morph is key morph\n");
+                foundCurrentMorph = true;
+            } else if (beforeMorph == nil && morph.canBeKeyMorph) {
+                printf("morph before finding key morph can be key morph\n");
+                beforeMorph = morph;
+            }
+        } else if (afterMorph == nil && morph.canBeKeyMorph) {
+            printf("morph after finding key morph can be key morph\n");
+            afterMorph = morph;
+        }
+        if (beforeMorph != nil && afterMorph != nil) {
+            break;
+        }
+    }
+
+    if (forward) {
+        if (afterMorph != nil) {
+            // no loop needed
+
+            _keyMorph = afterMorph;
+
+        } else if (beforeMorph != nil) {
+            // loop around
+
+            _keyMorph = beforeMorph;
+
+        }
+    } else {
+        if (beforeMorph != nil) {
+            // no loop needed
+
+            _keyMorph = beforeMorph;
+        } else if (afterMorph != nil) {
+            // loop around
+
+            _keyMorph = afterMorph;
+        }
+    }
+
+    NSLog(@"key morph is now %@", _keyMorph);
+}
+
+- (void)_sortFocusLoop {
+    NSComparator block = ^NSComparisonResult (PPPMorph* a, PPPMorph* b) {
+        const auto pointA = [a pointToRoot: a.position];
+        const auto pointB = [b pointToRoot: b.position];
+
+        if (pointA.y > pointB.y) {
+            return NSOrderedDescending;
+        } else if (pointA.y < pointB.y) {
+            return NSOrderedAscending;
+        }
+
+        if (pointA.x > pointB.x) {
+            return NSOrderedDescending;
+        } else if (pointA.x < pointB.x) {
+            return NSOrderedAscending;
+        }
+
+        return NSOrderedSame;
+    };
+    [_focusLoop sortUsingComparator: block];
 }
 
 @end
@@ -98,6 +195,10 @@
                 }
                 break;
             case PPPEventType::KeyDown:
+                if (pppEvent.whatKey == GDK_KEY_Tab) {
+                    printf("tab pressed!\n");
+                    [window->rootMorph _doKeyMorph:true];
+                }
                 for (PPPMorph* subscriber in window->keyboardClients) {
                     [subscriber keyDown: pppEvent];
                 }

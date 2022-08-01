@@ -43,6 +43,7 @@
     newMorph->owner = self;
     [newMorph setPosition: [newMorph pointFromParent:[newMorph position]]];
     [self->submorphs addObject: newMorph];
+    [self submorphAdded: newMorph in: self];
     [self __updateSticksOut];
 }
 
@@ -51,6 +52,7 @@
     oldMorph->owner = nil;
     [oldMorph setPosition:pos];
     [self->submorphs removeObject: oldMorph];
+    [self submorphRemoved: oldMorph from: self];
     [self __updateSticksOut];
 }
 
@@ -131,6 +133,25 @@
 
 - (void)changed {
     [owner changed: [self baseBounds]];
+}
+
+- (void)submorphAdded:(PPPMorph *)morph in:(PPPMorph *)parent {
+    [self.parentMorph submorphAdded:morph in:parent];
+}
+
+- (void)submorphRemoved:(PPPMorph *)morph from:(PPPMorph *)oldParent {
+    [self.parentMorph submorphRemoved:morph from:oldParent];
+}
+
+- (PPPPoint)pointToRoot:(const PPPPoint &)point {
+    if (self.parentMorph == nil) {
+        return point;
+    }
+    return [self.parentMorph pointToRoot: [self pointToParent: point]];
+}
+
+- (bool)canBeKeyMorph {
+    return false;
 }
 
 @end
