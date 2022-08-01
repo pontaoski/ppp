@@ -1,8 +1,6 @@
 #import <Foundation/Foundation.h>
-#import <cairomm/context.h>
-#import <cairomm/surface.h>
-#import <graphene-1.0/graphene.h>
 #import "PPPColor.h"
+#import <algorithm>
 
 struct PPPSize {
     int width;
@@ -145,8 +143,6 @@ struct PPPRectangle {
 
 - (id) init;
 
-- (Cairo::RefPtr<Cairo::Context>) context;
-
 - (void) strokeRectangle: (const PPPRectangle&) rect width: (int) width color: (PPPColor*) color;
 - (void) fillRectangle: (const PPPRectangle&) rect color: (PPPColor*) color;
 
@@ -159,21 +155,6 @@ typedef void (^CanvasCallback) (PPPCanvas* canvas);
 
 @end
 
-
-
-
-
-@interface PPPImageCanvas : PPPCanvas {
-    Cairo::RefPtr<Cairo::ImageSurface> surface;
-    Cairo::RefPtr<Cairo::Context> context;
-}
-
-@end
-
-@interface PPPContextCanvas : PPPCanvas {
-    Cairo::RefPtr<Cairo::Context> context;
-}
-
-- (id) initWithContext: (Cairo::RefPtr<Cairo::Context>) context;
+@interface PPPImageCanvas : PPPCanvas
 
 @end

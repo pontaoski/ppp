@@ -2,13 +2,7 @@
 #import "PPPCanvas.h"
 #import "PPPHandler.h"
 
-@interface PPPMorph : PPPHandler {
-    PPPMorph* owner;
-    NSMutableArray<PPPMorph*>* submorphs;
-    PPPPoint position;
-    PPPSize size;
-    bool sticksOut;
-}
+@interface PPPMorph : PPPHandler
 
 - (id) init;
 

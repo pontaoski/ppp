@@ -1,11 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface PPPColor : NSObject {
-    double red;
-    double green;
-    double blue;
-    double alpha;
-}
+@interface PPPColor : NSObject
 
 + (PPPColor*) red;
 + (PPPColor*) green;

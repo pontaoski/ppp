@@ -1,10 +1,7 @@
 #define private public
 
-#import "PPPCanvas.h"
+#import "PPPCanvas+Cairo.h"
 #import "PPPColor+Cairo.h"
-
-#import <cairomm/surface.h>
-#import <cairomm/context.h>
 
 @implementation PPPCanvas
 
@@ -94,10 +91,6 @@ static void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, const PPPRoundedRect
     ctx->restore();
 }
 
-- (Cairo::RefPtr<Cairo::Context>) context {
-    exit(1);
-}
-
 - (id)init {
     self = [super init];
 
@@ -142,7 +135,10 @@ static void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, const PPPRoundedRect
 
 @end
 
-@implementation PPPImageCanvas
+@implementation PPPImageCanvas {
+    Cairo::RefPtr<Cairo::ImageSurface> surface;
+    Cairo::RefPtr<Cairo::Context> context;
+}
 
 - (id)init {
     self = [super init];
@@ -159,22 +155,4 @@ static void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, const PPPRoundedRect
 
 @end
 
-@implementation PPPContextCanvas
 
-- (Cairo::RefPtr<Cairo::Context>) context {
-    return self->context;
-}
-
-- (id)initWithContext:(Cairo::RefPtr<Cairo::Context>)ctx {
-    self = [super init];
-
-    self->context = ctx;
-
-    return self;
-}
-
-- (id)init {
-    return [self initWithContext:{}];
-}
-
-@end

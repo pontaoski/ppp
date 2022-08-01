@@ -1,5 +1,6 @@
 #import "PPPBase.h"
-#include "PPPCanvas.h"
+#import "PPPCanvas.h"
+#import "PPPCanvas+Cairo.h"
 
 #import <gdk/gdk.h>
 #import <gdk/gdkwayland.h>
@@ -29,7 +30,16 @@
 
 @end
 
-@implementation PPPWindow
+@implementation PPPWindow {
+    GdkWindow* window;
+    NSString* title;
+    PPPWindowMorph* rootMorph;
+
+    PPPMorph* untilPointerAllUpClient;
+
+    NSMutableArray<PPPMorph*>* pointerClients;
+    NSMutableArray<PPPMorph*>* keyboardClients;
+}
 
 @synthesize rootMorph;
 

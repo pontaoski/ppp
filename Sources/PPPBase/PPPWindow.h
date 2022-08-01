@@ -6,16 +6,7 @@ typedef struct _GdkWindow GdkWindow;
 @class PPPMorph;
 @class PPPWindowMorph;
 
-@interface PPPWindow : NSObject {
-    GdkWindow* window;
-    NSString* title;
-    PPPWindowMorph* rootMorph;
-
-    PPPMorph* untilPointerAllUpClient;
-
-    NSMutableArray<PPPMorph*>* pointerClients;
-    NSMutableArray<PPPMorph*>* keyboardClients;
-}
+@interface PPPWindow : NSObject
 
 + (void) initialize;
 

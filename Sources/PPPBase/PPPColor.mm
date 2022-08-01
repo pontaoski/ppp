@@ -1,6 +1,11 @@
 #import "PPPColor.h"
 
-@implementation PPPColor
+@implementation PPPColor {
+    double red;
+    double green;
+    double blue;
+    double alpha;
+}
 
 @synthesize red;
 @synthesize green;

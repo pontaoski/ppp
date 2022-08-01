@@ -1,7 +1,13 @@
 #import "PPPMorph.h"
 #include "PPPCanvas.h"
 
-@implementation PPPMorph
+@implementation PPPMorph {
+    PPPMorph* owner;
+    NSMutableArray<PPPMorph*>* submorphs;
+    PPPPoint position;
+    PPPSize size;
+    bool sticksOut;
+}
 
 @synthesize position;
 @synthesize size;

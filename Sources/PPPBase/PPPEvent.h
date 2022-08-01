@@ -53,13 +53,7 @@ constexpr bool operator&(PPPButtonState lhs, PPPButtonState rhs) {
 
 @class PPPWindow;
 
-@interface PPPEvent : NSObject {
-    PPPEventType eventType;
-    PPPPoint point;
-    __weak PPPWindow* window;
-    PPPButtonState buttonState;
-    uint32_t whatKey;
-}
+@interface PPPEvent : NSObject
 
 - (id) initFrom: (GdkEvent*)event window: (__weak PPPWindow*) window;
 

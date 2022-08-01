@@ -11,7 +11,13 @@
 
 @end
 
-@implementation PPPEvent
+@implementation PPPEvent {
+    PPPEventType eventType;
+    PPPPoint point;
+    __weak PPPWindow* window;
+    PPPButtonState buttonState;
+    uint32_t whatKey;
+}
 
 @synthesize eventType;
 @synthesize point;
