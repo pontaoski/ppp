@@ -1,10 +1,10 @@
 #import "PPPColor.h"
 
 @implementation PPPColor {
-    double red;
-    double green;
-    double blue;
-    double alpha;
+    double _red;
+    double _green;
+    double _blue;
+    double _alpha;
 }
 
 @synthesize red;
@@ -27,10 +27,10 @@
 - (id)initWithRed:(double)withRed green:(double)withGreen blue:(double)withBlue alpha:(double)withAlpha {
     self = [super init];
 
-    self->red = withRed;
-    self->green = withGreen;
-    self->blue = withBlue;
-    self->alpha = withAlpha;
+    self->_red = withRed;
+    self->_green = withGreen;
+    self->_blue = withBlue;
+    self->_alpha = withAlpha;
 
     return self;
 }

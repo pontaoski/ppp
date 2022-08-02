@@ -9,17 +9,17 @@
 @end
 
 @implementation PPPContextCanvas {
-    Cairo::RefPtr<Cairo::Context> context;
+    Cairo::RefPtr<Cairo::Context> _context;
 }
 
 - (Cairo::RefPtr<Cairo::Context>) context {
-    return self->context;
+    return self->_context;
 }
 
 - (id)initWithContext:(Cairo::RefPtr<Cairo::Context>)ctx {
     self = [super init];
 
-    self->context = ctx;
+    self->_context = ctx;
 
     return self;
 }

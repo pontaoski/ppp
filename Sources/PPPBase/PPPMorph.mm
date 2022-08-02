@@ -2,18 +2,18 @@
 #include "PPPCanvas.h"
 
 @implementation PPPMorph {
-    PPPMorph* owner;
-    NSMutableArray<PPPMorph*>* submorphs;
-    PPPPoint position;
-    PPPSize size;
-    bool sticksOut;
+    PPPMorph* _owner;
+    NSMutableArray<PPPMorph*>* _submorphs;
+    PPPPoint _position;
+    PPPSize _size;
+    bool _sticksOut;
 }
 
 @synthesize position;
 @synthesize size;
 
 - (PPPHandler*)nextHandler {
-    return self->owner;
+    return self->_owner;
 }
 
 - (void)drawSelfTo:(PPPCanvas *)canvas {
@@ -22,7 +22,7 @@
 - (void)drawTo:(PPPCanvas *)canvas {
     [self drawSelfTo:canvas];
 
-    for (PPPMorph* submorph in self->submorphs) {
+    for (PPPMorph* submorph in self->_submorphs) {
         const auto pos = submorph.position;
         [canvas withTransformation: pos.x tY:pos.y callback: ^(PPPCanvas *canvas) {
             [submorph drawTo:canvas];
@@ -31,64 +31,64 @@
 }
 
 - (PPPMorph*) parentMorph {
-    return self->owner;
+    return self->_owner;
 }
 
 - (void) __updateSticksOut {
-    self->sticksOut = false;
-    for (PPPMorph* morph in submorphs) {
+    self->_sticksOut = false;
+    for (PPPMorph* morph in _submorphs) {
         if (!self.baseBounds.totallyContains(morph.baseBounds)) {
-            self->sticksOut = true;
+            self->_sticksOut = true;
             return;
         }
     }
 }
 
 - (void) addMorph: (PPPMorph*) newMorph {
-    auto oldOwner = newMorph->owner;
+    auto oldOwner = newMorph->_owner;
     if (oldOwner != nil) {
         [oldOwner removeMorph: newMorph];
     }
-    newMorph->owner = self;
+    newMorph->_owner = self;
     [newMorph setPosition: [newMorph pointFromParent:[newMorph position]]];
-    [self->submorphs addObject: newMorph];
+    [self->_submorphs addObject: newMorph];
     [self __updateSticksOut];
 }
 
 - (void) removeMorph: (PPPMorph*) oldMorph {
     auto pos = [oldMorph pointToParent:[oldMorph position]];
-    oldMorph->owner = nil;
+    oldMorph->_owner = nil;
     [oldMorph setPosition:pos];
-    [self->submorphs removeObject: oldMorph];
+    [self->_submorphs removeObject: oldMorph];
     [self __updateSticksOut];
 }
 
 - (NSArray<PPPMorph*>*) submorphs {
-    return self->submorphs;
+    return self->_submorphs;
 }
 
 - (id)init {
     self = [super init];
 
-    self->owner = nil;
-    self->submorphs = [NSMutableArray new];
+    self->_owner = nil;
+    self->_submorphs = [NSMutableArray new];
 
     return self;
 }
 
 - (PPPPoint)pointToParent:(const PPPPoint&)point {
-    if (self->owner == nil) {
+    if (self->_owner == nil) {
         return point;
     } else {
-        return [self->owner pointToParent:[self->owner position]] + point;
+        return [self->_owner pointToParent:[self->_owner position]] + point;
     }
 }
 
 - (PPPPoint)pointFromParent:(const PPPPoint&)point {
-    if (self->owner == nil) {
+    if (self->_owner == nil) {
         return point;
     } else {
-        return point - [self->owner pointToParent:[self->owner position]];
+        return point - [self->_owner pointToParent:[self->_owner position]];
     }
 }
 
@@ -102,7 +102,7 @@
 
 - (PPPMorph *)morphAtPosition:(PPPPoint)point {
     @autoreleasepool {
-        for (PPPMorph* morph in self->submorphs.reverseObjectEnumerator) {
+        for (PPPMorph* morph in self->_submorphs.reverseObjectEnumerator) {
             auto pt = [morph pointFromParent: point];
             if (morph.totalBounds.contains(pt)) {
                 if (auto child = [morph morphAtPosition:pt]) {
@@ -118,16 +118,16 @@
 }
 
 - (PPPRectangle)baseBounds {
-    return PPPRectangle::fromPointAndSize(self->position, self->size);
+    return PPPRectangle::fromPointAndSize(self->_position, self->_size);
 }
 
 - (PPPRectangle)totalBounds {
-    if (!self->sticksOut) {
+    if (!self->_sticksOut) {
         return self.baseBounds;
     }
 
     auto rect = self.baseBounds;
-    for (PPPMorph* morph in submorphs) {
+    for (PPPMorph* morph in _submorphs) {
         rect = rect.mergedWith([morph rectToParent: morph.totalBounds]);
     }
 
@@ -135,11 +135,11 @@
 }
 
 - (void)changed:(const PPPRectangle &)rect {
-    [owner changed: [self rectToParent: rect]];
+    [_owner changed: [self rectToParent: rect]];
 }
 
 - (void)changed {
-    [owner changed: [self baseBounds]];
+    [_owner changed: [self baseBounds]];
 }
 
 @end

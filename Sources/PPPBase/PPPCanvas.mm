@@ -136,21 +136,21 @@ static void roundedRect(Cairo::RefPtr<Cairo::Context>& ctx, const PPPRoundedRect
 @end
 
 @implementation PPPImageCanvas {
-    Cairo::RefPtr<Cairo::ImageSurface> surface;
-    Cairo::RefPtr<Cairo::Context> context;
+    Cairo::RefPtr<Cairo::ImageSurface> _surface;
+    Cairo::RefPtr<Cairo::Context> _context;
 }
 
 - (id)init {
     self = [super init];
 
-    self->surface = Cairo::ImageSurface::create(Cairo::Format::FORMAT_ARGB32, 100, 100);
-    self->context = Cairo::Context::create(self->surface);
+    self->_surface = Cairo::ImageSurface::create(Cairo::Format::FORMAT_ARGB32, 100, 100);
+    self->_context = Cairo::Context::create(self->_surface);
 
     return self;
 }
 
 - (Cairo::RefPtr<Cairo::Context>)context {
-    return self->context;
+    return self->_context;
 }
 
 @end

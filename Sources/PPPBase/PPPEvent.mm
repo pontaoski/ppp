@@ -12,11 +12,11 @@
 @end
 
 @implementation PPPEvent {
-    PPPEventType eventType;
-    PPPPoint point;
-    __weak PPPWindow* window;
-    PPPButtonState buttonState;
-    uint32_t whatKey;
+    PPPEventType _eventType;
+    PPPPoint _point;
+    __weak PPPWindow* _window;
+    PPPButtonState _buttonState;
+    uint32_t _whatKey;
 }
 
 @synthesize eventType;
@@ -28,7 +28,7 @@
 - (id)initFrom:(GdkEvent *)event window: (__weak PPPWindow*) win {
     self = [super init];
 
-    self->window = win;
+    self->_window = win;
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -54,53 +54,53 @@
 }
 
 - (void) setButtonStateFrom: (guint)state type: (guint)type button: (guint)button {
-    self->buttonState = PPPButtonState::None;
+    self->_buttonState = PPPButtonState::None;
     if (state & GDK_BUTTON1_MASK && (type != GDK_BUTTON_RELEASE || button != 1)) {
-        self->buttonState |= PPPButtonState::Left;
+        self->_buttonState |= PPPButtonState::Left;
     }
     if (state & GDK_BUTTON2_MASK && (type != GDK_BUTTON_RELEASE || button != 2)) {
-        self->buttonState |= PPPButtonState::Middle;
+        self->_buttonState |= PPPButtonState::Middle;
     }
     if (state & GDK_BUTTON3_MASK && (type != GDK_BUTTON_RELEASE || button != 3)) {
-        self->buttonState |= PPPButtonState::Right;
+        self->_buttonState |= PPPButtonState::Right;
     }
     if (state & GDK_BUTTON4_MASK && (type != GDK_BUTTON_RELEASE || button != 4)) {
-        self->buttonState |= PPPButtonState::Other;
+        self->_buttonState |= PPPButtonState::Other;
     }
     if (state & GDK_BUTTON5_MASK && (type != GDK_BUTTON_RELEASE || button != 5)) {
-        self->buttonState |= PPPButtonState::Other;
+        self->_buttonState |= PPPButtonState::Other;
     }
 }
 
 - (void) setFromButtonEvent:(GdkEventButton *)event {
-    self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+    self->_point = {static_cast<int>(event->x), static_cast<int>(event->y)};
     [self setButtonStateFrom: event->state type: event->type button: event->button];
 
     switch (event->button) {
     case 1: // left
         switch (event->type) {
-        case GDK_BUTTON_PRESS: self->eventType = PPPEventType::LeftMouseClick; break;
-        case GDK_2BUTTON_PRESS: self->eventType = PPPEventType::LeftMouseDoubleClick; break;
-        case GDK_3BUTTON_PRESS: self->eventType = PPPEventType::LeftMouseTripleClick; break;
-        case GDK_BUTTON_RELEASE: self->eventType = PPPEventType::LeftMouseRelease; break;
+        case GDK_BUTTON_PRESS: self->_eventType = PPPEventType::LeftMouseClick; break;
+        case GDK_2BUTTON_PRESS: self->_eventType = PPPEventType::LeftMouseDoubleClick; break;
+        case GDK_3BUTTON_PRESS: self->_eventType = PPPEventType::LeftMouseTripleClick; break;
+        case GDK_BUTTON_RELEASE: self->_eventType = PPPEventType::LeftMouseRelease; break;
         default: break;
         }
         break;
     case 2: // middle
         switch (event->type) {
-        case GDK_BUTTON_PRESS: self->eventType = PPPEventType::MiddleMouseClick; break;
-        case GDK_2BUTTON_PRESS: self->eventType = PPPEventType::MiddleMouseDoubleClick; break;
-        case GDK_3BUTTON_PRESS: self->eventType = PPPEventType::MiddleMouseTripleClick; break;
-        case GDK_BUTTON_RELEASE: self->eventType = PPPEventType::MiddleMouseRelease; break;
+        case GDK_BUTTON_PRESS: self->_eventType = PPPEventType::MiddleMouseClick; break;
+        case GDK_2BUTTON_PRESS: self->_eventType = PPPEventType::MiddleMouseDoubleClick; break;
+        case GDK_3BUTTON_PRESS: self->_eventType = PPPEventType::MiddleMouseTripleClick; break;
+        case GDK_BUTTON_RELEASE: self->_eventType = PPPEventType::MiddleMouseRelease; break;
         default: break;
         }
         break;
     case 3: // right
         switch (event->type) {
-        case GDK_BUTTON_PRESS: self->eventType = PPPEventType::RightMouseClick; break;
-        case GDK_2BUTTON_PRESS: self->eventType = PPPEventType::RightMouseDoubleClick; break;
-        case GDK_3BUTTON_PRESS: self->eventType = PPPEventType::RightMouseTripleClick; break;
-        case GDK_BUTTON_RELEASE: self->eventType = PPPEventType::RightMouseRelease; break;
+        case GDK_BUTTON_PRESS: self->_eventType = PPPEventType::RightMouseClick; break;
+        case GDK_2BUTTON_PRESS: self->_eventType = PPPEventType::RightMouseDoubleClick; break;
+        case GDK_3BUTTON_PRESS: self->_eventType = PPPEventType::RightMouseTripleClick; break;
+        case GDK_BUTTON_RELEASE: self->_eventType = PPPEventType::RightMouseRelease; break;
         default: break;
         }
         break;
@@ -110,27 +110,27 @@
 }
 
 - (void)setFromMotionEvent:(GdkEventMotion *)event {
-    self->eventType = PPPEventType::MouseMove;
-    self->point = {static_cast<int>(event->x), static_cast<int>(event->y)};
+    self->_eventType = PPPEventType::MouseMove;
+    self->_point = {static_cast<int>(event->x), static_cast<int>(event->y)};
     [self setButtonStateFrom: event->state type: event->type button: 0];
 }
 
 - (void)setFromKeyEvent:(GdkEventKey *)event {
-    self->point = {-1, -1};
+    self->_point = {-1, -1};
     [self setButtonStateFrom: event->state type: event->type button: 0];
 
     switch (event->type) {
     case GDK_KEY_PRESS:
-        self->eventType = PPPEventType::KeyDown;
+        self->_eventType = PPPEventType::KeyDown;
         break;
     case GDK_KEY_RELEASE:
-        self->eventType = PPPEventType::KeyUp;
+        self->_eventType = PPPEventType::KeyUp;
         break;
     default:
         break;
     }
 
-    self->whatKey = event->keyval;    
+    self->_whatKey = event->keyval;    
 }
 
 @end
