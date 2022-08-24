@@ -19,11 +19,11 @@
     uint32_t _whatKey;
 }
 
-@synthesize eventType;
-@synthesize point;
-@synthesize window;
-@synthesize buttonState;
-@synthesize whatKey;
+@synthesize eventType = _eventType;
+@synthesize point = _point;
+@synthesize window = _window;
+@synthesize buttonState = _buttonState;
+@synthesize whatKey = _whatKey;
 
 - (id)initFrom:(GdkEvent *)event window: (__weak PPPWindow*) win {
     self = [super init];

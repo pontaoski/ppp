@@ -7,10 +7,10 @@
     double _alpha;
 }
 
-@synthesize red;
-@synthesize green;
-@synthesize blue;
-@synthesize alpha;
+@synthesize red = _red;
+@synthesize green = _green;
+@synthesize blue = _blue;
+@synthesize alpha = _alpha;
 
 + (PPPColor *)blue {
     return [[PPPColor alloc] initWithRed:0 green:0 blue:1.0 alpha:1.0];

@@ -9,8 +9,8 @@
     bool _sticksOut;
 }
 
-@synthesize position;
-@synthesize size;
+@synthesize position = _position;
+@synthesize size = _size;
 
 - (PPPHandler*)nextHandler {
     return self->_owner;
